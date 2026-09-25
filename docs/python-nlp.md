@@ -51,7 +51,7 @@ docker compose --profile nlp run --rm nlp \
   --pretty
 ```
 
-Service `nlp` membaca `GOODEVA_API_KEY` dari `.env` dan diarahkan otomatis ke service internal `http://api:3000`. Pastikan `GOODEVA_API_KEY` milik organisasi yang ada; nilai demo adalah `demo-org-key`.
+Service `nlp` membaca `GOODEVA_API_KEY` dari `.env` dan diarahkan otomatis ke service internal `http://api:3000`. Pastikan `GOODEVA_API_KEY` milik organisasi yang ada; nilai contoh pada `.env.example` adalah `demo-org-key`.
 
 ## 1. Menganalisis Teks Mentah
 
@@ -67,7 +67,7 @@ Contoh output:
   "ticket_id": null,
   "subject": null,
   "category": null,
-  "text_length": 104,
+  "text_length": 90,
   "entities": {
     "emails": ["alice@example.com"],
     "phones": ["+62 812-3456-7890"],

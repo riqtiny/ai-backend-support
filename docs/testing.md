@@ -48,12 +48,12 @@ RUN_DOCKER_NLP=false ./scripts/smoke-test.sh
 7. Pengambilan detail tiket.
 8. Perubahan status menjadi `in_progress`.
 9. UUID dan status tidak valid menghasilkan `400`.
-10. Detail, list, dan update lintas tenant menghasilkan `404`.
+10. Detail dan update lintas tenant menghasilkan `404`; list lintas tenant tetap `200`, tetapi tidak memuat tiket tenant lain.
 11. Ekstraksi Python NLP lokal.
 12. Mode raw-text pada container NLP.
 13. Mode pengambilan tiket dari API pada container NLP.
 
-`CLEANUP=true` menghapus tiket dan organisasi sementara yang dibuat script melalui container database. Gunakan `CLEANUP=false` jika data hasil pengujian ingin diperiksa.
+`CLEANUP=true` mencoba menghapus tiket utama dan organisasi sementara melalui container database. Script hanya menyimpan ID tiket utama, sehingga tiket duplikat yang dibuat pada skenario 5 tetap berada di database. Penghapusan hanya dicoba jika service Compose `db` aktif. Gunakan `CLEANUP=false` jika data hasil pengujian ingin diperiksa.
 
 ## Skenario Manual yang Dapat Disalin
 

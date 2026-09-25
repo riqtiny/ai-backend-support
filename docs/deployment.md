@@ -60,7 +60,7 @@ Setelah mengubah `.env`, recreate container API:
 docker compose up -d --build --wait --force-recreate
 ```
 
-Compose meng-override `DATABASE_URL`, `REDIS_URL`, dan konfigurasi cache pada service `api` agar sesuai dengan nama service internal. Nilai variabel tersebut di `.env` tetap diperlukan saat menjalankan dependensi atau API langsung dari host.
+Compose meng-override `DATABASE_URL`, `REDIS_URL`, dan konfigurasi cache pada service `api` agar sesuai dengan nama service internal. `DATABASE_URL` di `.env` tetap diperlukan ketika menjalankan Prisma CLI atau API langsung dari host. `REDIS_URL` dan konfigurasi cache memiliki fallback runtime untuk host, tetapi harus disesuaikan bila layanannya tidak berada di `localhost`. Service `db` dan `redis` sendiri tidak membaca env aplikasi tersebut.
 
 ### Container NLP Python Opsional
 
@@ -83,7 +83,7 @@ docker compose --profile nlp run --rm nlp \
   --pretty
 ```
 
-Container `nlp` menggunakan jaringan Compose yang sama dengan API. `GOODEVA_API_URL` otomatis diarahkan ke `http://api:3000`. Untuk mode pengambilan dari API, pastikan `GOODEVA_API_KEY` tersedia di `.env`; nilai demo adalah `demo-org-key`.
+Container `nlp` menggunakan jaringan Compose yang sama dengan API. `GOODEVA_API_URL` otomatis diarahkan ke `http://api:3000`. Untuk mode pengambilan dari API, pastikan `GOODEVA_API_KEY` tersedia di `.env`; nilai contoh pada `.env.example` adalah `demo-org-key`.
 
 ## Pengembangan Lokal
 

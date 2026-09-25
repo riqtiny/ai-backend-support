@@ -51,11 +51,11 @@ Keputusan bentuk skema:
 HTTP request
     │
     ▼
-ValidationPipe + validasi DTO
-    │
-    ▼
 ApiKeyGuard
     │  Cari Organization berdasarkan api_key
+    ▼
+ValidationPipe + validasi DTO
+    │
     ▼
 TicketsController
     │
@@ -65,15 +65,20 @@ TicketsService
     ├── Prisma: simpan ticket (organizationId dari guard)
     │
     ├── Redis: lookup exact/near-duplicate
-    │       └── miss → LlmService
+    │       ├── cache hit → hasil dari cache
+    │       └── cache miss
+    │           ├── LLM terkonfigurasi → OpenAI
+    │           │   ├── hasil valid → hasil enrichment
+    │           │   └── kegagalan → null
+    │           └── tanpa API key/provider → null
     │
-    ├── OpenAI: klasifikasi + draf balasan
-    │       └── hasil valid → update ticket
-    │
-    ├── Redis: simpan hasil valid ke cache
+    ├── Jika hasil valid → Prisma: update ticket
+    ├── Jika hasil valid → Redis: simpan/tulis ulang cache
     │
     └── Prisma: muat ulang ticket dalam scope tenant
 ```
+
+`ApiKeyGuard` berjalan sebelum `ValidationPipe` dalam lifecycle NestJS. Karena itu, request ke endpoint tiket tanpa API key yang valid dapat menghasilkan `401` sebelum validasi body dilakukan.
 
 Tiket sengaja disimpan terlebih dahulu. Jika enrichment gagal, tiket yang sudah tersimpan tetap dikembalikan.
 

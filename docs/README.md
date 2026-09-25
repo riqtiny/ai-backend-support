@@ -1,6 +1,6 @@
 # Dokumentasi GoodevaDesk
 
-Dokumen ini menjelaskan cara menjalankan, memahami, menguji, dan mengoperasikan GoodevaDesk Support API.
+Dokumen ini menjelaskan cara menjalankan, memahami, menguji, dan mengoperasikan API Dukungan GoodevaDesk.
 
 ## Daftar Dokumentasi
 

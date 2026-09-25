@@ -34,10 +34,10 @@ Dokumentasi lengkap tersedia di [`docs/`](docs/README.md):
 
 Pilih salah satu mode berikut:
 
-- **Docker Compose (direkomendasikan):** Docker dan Docker Compose.
-- **Pengembangan lokal:** Node.js 20+, npm, PostgreSQL, dan Redis. PostgreSQL dan Redis dapat dijalankan melalui Docker atau sebagai layanan lokal.
+- **Docker Compose (direkomendasikan):** Docker dan Docker Compose. Jika juga menjalankan `npm run test:smoke`, diperlukan Node.js 20+, npm, `curl`, dan Python 3.
+- **Pengembangan lokal:** Node.js 20+, npm, PostgreSQL, dan Redis. PostgreSQL dan Redis dapat dijalankan melalui Docker atau sebagai layanan lokal. `curl` dan Python 3 diperlukan tambahan untuk smoke test atau helper Python NLP.
 
-`OPENAI_API_KEY` diperlukan untuk klasifikasi LLM. Tanpa kunci tersebut, API tetap berjalan dan menyimpan tiket, tetapi `category` dan `suggestedReply` akan tetap `null`.
+`OPENAI_API_KEY` diperlukan untuk memanggil LLM. Tanpa kunci tersebut, API tetap berjalan dan menyimpan tiket. `category` dan `suggestedReply` dapat terisi dari cache Redis; jika cache miss, keduanya tetap `null`.
 
 ### Opsi 1: Docker Compose
 
@@ -80,6 +80,8 @@ Jalankan skenario end-to-end setelah seluruh stack aktif:
 ```bash
 npm run test:smoke
 ```
+
+> Catatan: smoke test hanya menyimpan dan membersihkan ID tiket utama. Tiket duplikat yang dibuat selama skenario konsisten dapat tetap ada, dan cleanup database hanya dicoba jika service `db` Compose aktif.
 
 Helper Python NLP opsional dapat dijalankan sebagai container satu kali:
 
@@ -142,24 +144,24 @@ API lokal juga tersedia di `http://localhost:3000`.
 
 Salin `.env.example` sebagai titik awal. Daftar lengkap variabel:
 
-| Variabel                       | Default                     | Keterangan                                                                           |
-| ------------------------------ | --------------------------- | ------------------------------------------------------------------------------------ |
-| `NODE_ENV`                     | -                           | Mode aplikasi, misalnya `development` atau `production`                              |
-| `PORT`                         | `3000`                      | Port API                                                                             |
-| `DATABASE_URL`                 | -                           | URL PostgreSQL; wajib diisi                                                          |
-| `REDIS_ENABLED`                | `true`                      | Set ke `false` untuk menonaktifkan cache saat menjalankan API di luar Compose        |
-| `REDIS_URL`                    | `redis://localhost:6379`    | URL koneksi Redis                                                                    |
-| `CACHE_TTL_SECONDS`            | `604800`                    | TTL cache klasifikasi dalam detik (7 hari)                                           |
-| `CACHE_SIMILARITY_THRESHOLD`   | `0.85`                      | Ambang tingkat kemiripan, dari 0 sampai 1                                            |
-| `CACHE_SIMILARITY_MAX_ENTRIES` | `100`                       | Jumlah maksimum kunci cache yang diperiksa per pencarian near-duplicate              |
-| `GOODEVA_API_KEY`              | `demo-org-key`              | API key GoodevaDesk untuk mode pengambilan data oleh helper Python NLP               |
-| `GOODEVA_API_URL`              | `http://localhost:3000`     | Base URL API untuk helper Python NLP                                                 |
-| `LLM_PROVIDER`                 | `openai`                    | Provider LLM; saat ini hanya `openai` yang diimplementasikan                         |
-| `OPENAI_API_KEY`               | kosong                      | Secret LLM; wajib untuk enrichment                                                   |
-| `OPENAI_MODEL`                 | `gpt-4o-mini`               | Model Chat Completions                                                               |
-| `OPENAI_BASE_URL`              | `https://api.openai.com/v1` | Base URL provider atau endpoint kompatibel OpenAI                                    |
-| `LLM_TIMEOUT_MS`               | `10000`                     | Total timeout satu proses enrichment, termasuk retry                                 |
-| `LLM_MAX_RETRIES`              | `1`                         | Jumlah retry terbatas untuk HTTP 429/408/5xx dan error jaringan; dibatasi maksimum 3 |
+| Variabel                       | Default                         | Keterangan                                                                           |
+| ------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------ |
+| `NODE_ENV`                     | -                               | Mode aplikasi, misalnya `development` atau `production`                              |
+| `PORT`                         | `3000`                          | Port API                                                                             |
+| `DATABASE_URL`                 | -                               | URL PostgreSQL; wajib diisi                                                          |
+| `REDIS_ENABLED`                | `true`                          | Set ke `false` untuk menonaktifkan cache saat menjalankan API di luar Compose        |
+| `REDIS_URL`                    | `redis://localhost:6379`        | URL koneksi Redis                                                                    |
+| `CACHE_TTL_SECONDS`            | `604800`                        | TTL cache klasifikasi dalam detik (7 hari)                                           |
+| `CACHE_SIMILARITY_THRESHOLD`   | `0.85`                          | Ambang tingkat kemiripan, dari 0 sampai 1                                            |
+| `CACHE_SIMILARITY_MAX_ENTRIES` | `100`                           | Jumlah maksimum kunci cache yang diperiksa per pencarian near-duplicate              |
+| `GOODEVA_API_KEY`              | kosong (contoh: `demo-org-key`) | API key GoodevaDesk untuk mode pengambilan data oleh helper Python NLP               |
+| `GOODEVA_API_URL`              | `http://localhost:3000`         | Base URL API untuk helper Python NLP                                                 |
+| `LLM_PROVIDER`                 | `openai`                        | Provider LLM; saat ini hanya `openai` yang diimplementasikan                         |
+| `OPENAI_API_KEY`               | kosong                          | Secret LLM; diperlukan untuk pemanggilan LLM, bukan untuk cache hit                  |
+| `OPENAI_MODEL`                 | `gpt-4o-mini`                   | Model Chat Completions                                                               |
+| `OPENAI_BASE_URL`              | `https://api.openai.com/v1`     | Base URL provider atau endpoint kompatibel OpenAI                                    |
+| `LLM_TIMEOUT_MS`               | `10000`                         | Total timeout satu proses enrichment, termasuk retry                                 |
+| `LLM_MAX_RETRIES`              | `1`                             | Jumlah retry terbatas untuk HTTP 429/408/5xx dan error jaringan; dibatasi maksimum 3 |
 
 Aturan format `.env`:
 

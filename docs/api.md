@@ -14,7 +14,7 @@ Setiap endpoint `/tickets` memerlukan header berikut:
 x-api-key: <api-key-organisasi>
 ```
 
-API key dicari pada tabel `Organization`. Jika tidak ditemukan, API mengembalikan `401` tanpa memberikan informasi mengenai tenant lain.
+API key dicari pada tabel `organizations`. Jika tidak ditemukan, API mengembalikan `401` tanpa memberikan informasi mengenai tenant lain.
 
 Contoh:
 
@@ -82,14 +82,15 @@ curl -X POST "$BASE_URL/tickets" \
 
 ### Perilaku
 
-1. Validasi input.
-2. Simpan tiket dengan `status = open`.
-3. Cari hasil klasifikasi di Redis.
-4. Jika cache miss, panggil OpenAI.
-5. Simpan hasil valid ke tiket dan cache.
-6. Kembalikan representasi tiket terbaru dalam scope tenant.
+1. `ApiKeyGuard` memvalidasi API key dan organisasi.
+2. `ValidationPipe` memvalidasi input.
+3. Simpan tiket dengan `status = open`.
+4. Cari hasil klasifikasi di Redis.
+5. Jika cache miss dan LLM terkonfigurasi, panggil OpenAI.
+6. Jika hasil valid, simpan ke tiket dan cache.
+7. Kembalikan representasi tiket terbaru dalam scope tenant.
 
-Jika Redis atau LLM gagal, tiket tetap dikembalikan. Field enrichment mungkin bernilai `null`.
+Cache hit tetap dapat mengisi `category` dan `suggestedReply` tanpa `OPENAI_API_KEY`. Jika cache miss tanpa API key atau provider tidak didukung, field enrichment tetap `null`. Jika Redis atau LLM gagal, tiket tetap dikembalikan.
 
 ### Respons
 
