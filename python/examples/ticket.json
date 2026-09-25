@@ -1,0 +1,8 @@
+{
+  "id": "32c07686-20be-4c9b-b43b-6a5a9507c860",
+  "subject": "Invoice question",
+  "message": "I cannot see invoice INV-2048 for Rp125.000. Contact me at customer@example.com or +62 812-3456-7890. Reference: https://example.com/invoices/2048",
+  "customerEmail": "customer@example.com",
+  "category": "billing",
+  "status": "open"
+}

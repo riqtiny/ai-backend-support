@@ -1,0 +1,5 @@
+# Ekstraksi entitas inti hanya menggunakan pustaka standar Python.
+# Tidak ada package pihak ketiga yang diperlukan.
+#
+# Ekstensi future opsional, seperti spaCy atau Hugging Face NLI, dapat
+# ditambahkan di sini tanpa mengubah kontrak CLI.
